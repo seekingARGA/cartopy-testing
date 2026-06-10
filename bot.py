@@ -6,7 +6,7 @@ import tempfile
 from discord.ext import commands
 from config import TOKEN
 
-# Menginisiasi pengelola database
+
 manager = DB_Map("database.db")
 
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
@@ -32,7 +32,7 @@ async def help_me(ctx: commands.Context):
     )
     
     
-        # Implementasi perintah yang akan menampilkan daftar perintah yang tersedia)
+        
 
 @bot.command()
 async def show_city(ctx: commands.Context, *, city_name=""):
@@ -58,7 +58,7 @@ async def show_city(ctx: commands.Context, *, city_name=""):
 
 @bot.command()
 async def show_my_cities(ctx: commands.Context):
-    cities = manager.select_cities(ctx.author.id)  # Mengambil daftar kota yang diingat oleh pengguna
+    cities = manager.select_cities(ctx.author.id)  
     if not cities:
         await ctx.send("Anda belum menyimpan kota apa pun. Gunakan !remember_city <nama_kota> terlebih dahulu.")
         return
@@ -76,7 +76,7 @@ async def show_my_cities(ctx: commands.Context):
 
 @bot.command()
 async def remember_city(ctx: commands.Context, *, city_name=""):
-    if manager.add_city(ctx.author.id, city_name):  # Memeriksa apakah kota ada dalam database; jika ya, menambahkannya ke memori pengguna
+    if manager.add_city(ctx.author.id, city_name): 
         await ctx.send(f'Kota {city_name} telah berhasil disimpan!')
     else:
         await ctx.send("Format tidak benar. Silakan masukkan nama kota dalam bahasa Inggris, dengan spasi setelah perintah.")
@@ -84,7 +84,7 @@ async def remember_city(ctx: commands.Context, *, city_name=""):
 
 @bot.command()
 async def change_marker_color(ctx: commands.Context, color: str):
-    # Warna-warna dasar yang tersedia
+    
     basic_colors = ['red', 'blue', 'green', 'yellow', 'cyan', 'magenta', 'orange', 'purple', 'black', 'gray', 'brown', 'pink']
     
     color_lower = color.lower()
