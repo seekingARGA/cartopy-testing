@@ -27,7 +27,8 @@ async def help_me(ctx: commands.Context):
         "!help_me - Menampilkan daftar perintah yang tersedia\n"
         "!show_city <nama_kota> - Menampilkan peta dengan kota yang ditentukan\n"
         "!show_my_cities - Menampilkan peta dengan kota-kota yang telah disimpan oleh pengguna\n"
-        "!remember_city <nama_kota> - Menyimpan kota ke dalam memori pengguna (gunakan nama kota dalam bahasa Inggris)"
+        "!remember_city <nama_kota> - Menyimpan kota ke dalam memori pengguna (gunakan nama kota dalam bahasa Inggris)\n"
+        "!change_marker_color <warna> - Mengubah warna penanda kota (red, blue, green, yellow, cyan, magenta, orange, purple, black, gray, brown, pink)"
     )
     
     
@@ -48,7 +49,8 @@ async def show_city(ctx: commands.Context, *, city_name=""):
         image_path = tmp_file.name
 
     try:
-        manager.create_graph(image_path, [city_name])
+        user_color = manager.get_user_color(ctx.author.id)
+        manager.create_graph(image_path, [city_name], marker_color=user_color)
         await ctx.send(file=discord.File(image_path))
     finally:
         if os.path.exists(image_path):
@@ -65,7 +67,8 @@ async def show_my_cities(ctx: commands.Context):
         image_path = tmp_file.name
 
     try:
-        manager.create_graph(image_path, cities)
+        user_color = manager.get_user_color(ctx.author.id)
+        manager.create_graph(image_path, cities, marker_color=user_color)
         await ctx.send(file=discord.File(image_path))
     finally:
         if os.path.exists(image_path):
@@ -77,6 +80,20 @@ async def remember_city(ctx: commands.Context, *, city_name=""):
         await ctx.send(f'Kota {city_name} telah berhasil disimpan!')
     else:
         await ctx.send("Format tidak benar. Silakan masukkan nama kota dalam bahasa Inggris, dengan spasi setelah perintah.")
+
+
+@bot.command()
+async def change_marker_color(ctx: commands.Context, color: str):
+    # Warna-warna dasar yang tersedia
+    basic_colors = ['red', 'blue', 'green', 'yellow', 'cyan', 'magenta', 'orange', 'purple', 'black', 'gray', 'brown', 'pink']
+    
+    color_lower = color.lower()
+    if color_lower not in basic_colors:
+        await ctx.send(f"Warna '{color}' tidak valid. Pilih dari: {', '.join(basic_colors)}")
+        return
+    
+    manager.set_user_color(ctx.author.id, color_lower)
+    await ctx.send(f"Warna marker telah diubah menjadi **{color_lower}**! Gunakan !show_city atau !show_my_cities untuk melihat perubahan.")
 
 if __name__ == "__main__":
     bot.run(TOKEN)
